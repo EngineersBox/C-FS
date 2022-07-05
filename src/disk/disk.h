@@ -25,12 +25,12 @@ typedef struct Disk {
 } Disk;
 
 Disk* disk_create();
-void disk_destroy(Disk* disk);
+int disk_destroy(Disk* disk);
 
 int disk_open(Disk* disk, const char* path, size_t nblocks);
 
 size_t disk_size(Disk* disk);
-bool disk_verify_integrity(Disk* disk, int blocknum, char* data);
+bool disk_verify_integrity(Disk* disk, int blocknum, const char* data);
 
 bool disk_mounted(Disk* disk);
 int disk_mount(Disk* disk);
