@@ -1,0 +1,13 @@
+C:\Users\DEG3NERAT3_\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\221.5591.52\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/DEG3NERAT3_/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/221.5591.52/bin/ninja/win/ninja.exe -G Ninja -S E:\C-FS -B E:\C-FS\cmake-build-debug
+-- The C compiler identification is MSVC 19.30.30709.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Professional/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+CMake Error at CMakeLists.txt:23 (add_executable):
+  No SOURCES given to target: c_fs
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
