@@ -22,11 +22,11 @@ Disk* disk_create() {
 int dist_destroy(Disk* disk) {
     if (disk == NULL || disk->descriptor == NULL) {
         return 0;
-    } else if (__cfs_lock_lock(disk->lock) != 0) {
+    } else if (__cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     }
     fclose(disk->descriptor);
-    if (__cfs_lock_unlock(disk->lock) != 0) {
+    if (__cfs_lock_unlock(&disk->lock) != 0) {
         return -1;
     }
     free(disk);
@@ -36,21 +36,21 @@ int dist_destroy(Disk* disk) {
 int disk_open(Disk* disk, const char* path, size_t nblocks) {
     if (disk == NULL  || path == NULL) {
         return -1;
-    } else if (__cfs_lock_lock(disk->lock) != 0) {
+    } else if (__cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     }
     if ((disk->descriptor = fopen(path, "w+")) == NULL) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     }
     if (ftruncate(fileno(disk->descriptor), nblocks * BLOCK_SIZE) != 0) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     }
     disk->blocks = nblocks;
     disk->reads = 0;
     disk->writes = 0;
-    return __cfs_lock_unlock(disk->lock);
+    return __cfs_lock_unlock(&disk->lock);
 }
 
 size_t disk_size(Disk* disk) {
@@ -67,23 +67,23 @@ bool disk_mounted(Disk* disk) {
 int disk_mount(Disk* disk) {
     if (disk == NULL) {
         return -1;
-    } else if (__cfs_lock_lock(disk->lock) != 0) {
+    } else if (__cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     }
     disk->mounts++;
-    return __cfs_lock_unlock(disk->lock);
+    return __cfs_lock_unlock(&disk->lock);
 }
 
 int disk_unmount(Disk* disk) {
     if (disk == NULL) {
         return -1;
-    }  else if (__cfs_lock_lock(disk->lock) != 0) {
+    }  else if (__cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     } else if (disk->mounts > 0) {
         disk->mounts--;
         return 0;
     }
-    return __cfs_lock_unlock(disk->lock) != 0 ? -1 : 1;
+    return __cfs_lock_unlock(&disk->lock) != 0 ? -1 : 1;
 }
 
 bool disk_verify_integrity(Disk* disk, int block, const char* data) {
@@ -100,35 +100,35 @@ bool disk_verify_integrity(Disk* disk, int block, const char* data) {
 }
 
 int disk_read(Disk* disk, int block, char* src) {
-    if (disk != NULL && __cfs_lock_lock(lock) != 0) {
+    if (disk != NULL && __cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     } else if (!disk_verify_integrity(disk, block, src)) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     } else if (fseek(disk->descriptor, block * BLOCK_SIZE, SEEK_SET) < 0) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     } else if (fread(src, BLOCK_SIZE, 1, disk->descriptor) != 1) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     }
     disk->reads++;
-    return __cfs_lock_unlock(disk->lock);;
+    return __cfs_lock_unlock(&disk->lock);;
 }
 
 int disk_write(Disk* disk, int block, char* dst) {
-    if (disk != NULL && __cfs_lock_lock(lock) != 0) {
+    if (disk != NULL && __cfs_lock_lock(&disk->lock) != 0) {
         return -1;
     } else if (!disk_verify_integrity(disk, block, dst)) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     } else if (fseek(disk->descriptor, block * BLOCK_SIZE, SEEK_SET) < 0) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     } else if (fwrite(dst, BLOCK_SIZE, 1, disk->descriptor) != 1) {
-        __cfs_lock_unlock(disk->lock);
+        __cfs_lock_unlock(&disk->lock);
         return -1;
     }
     disk->writes++;
-    return __cfs_lock_unlock(disk->lock);;
+    return __cfs_lock_unlock(&disk->lock);;
 }

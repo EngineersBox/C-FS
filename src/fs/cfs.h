@@ -13,10 +13,10 @@ extern "C" {
 #include "../thread/lock.h"
 #include "../disk/disk.h"
 
-const static uint32_t MAGIC_NUMBER	     = 0xf0f03410;
-const static uint32_t INODES_PER_BLOCK   = 128;
-const static uint32_t POINTERS_PER_INODE = 5;
-const static uint32_t POINTERS_PER_BLOCK = 1024;
+#define MAGIC_NUMBER	   0xf0f03410
+#define INODES_PER_BLOCK   128
+#define POINTERS_PER_INODE 5
+#define POINTERS_PER_BLOCK 1024
 
 typedef struct SuperBlock {
     uint32_t magicNumber; // File system magic number
@@ -36,7 +36,7 @@ typedef union Block {
     SuperBlock super;			           // Superblock
     INode iNodes[INODES_PER_BLOCK];	       // Inode block
     uint32_t pointers[POINTERS_PER_BLOCK]; // Pointer block
-    char data[Disk::BLOCK_SIZE];	       // Data block
+    char data[BLOCK_SIZE];	               // Data block
 } Block;
 
 typedef struct CFS {

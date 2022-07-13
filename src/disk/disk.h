@@ -13,7 +13,7 @@ extern "C" {
 
 #include "../thread/lock.h"
 
-static const size_t BLOCK_SIZE = 4096;
+#define BLOCK_SIZE 4096
 
 typedef struct Disk {
     FILE* descriptor;
